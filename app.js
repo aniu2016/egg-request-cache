@@ -1,7 +1,7 @@
 'use strict';
 const md5 = require('md5');
 let instance;
-let cache = {};
+const cache = {};
 
 // 格式化响应体
 function transformResponse(ctx) {
@@ -77,6 +77,20 @@ async function clearExpireCache() {
   });
 }
 
+// 定时更新缓存数据
+async function updateCacheData() {
+  
+  return '';
+}
+
+async function updateMemoryData() {
+  return '';
+}
+
+async function updateRedisData() {
+  return '';
+}
+
 // 暴露的Api
 const requestCache = constructor();
 requestCache.get = constructor({
@@ -99,9 +113,11 @@ module.exports = app => {
   app.coreLogger.info('[egg-request] init instance success!');
 
   // 五秒清理一次缓存
-  const timer = setInterval(clearExpireCache, 5000);
+  const clearCacheTimer = setInterval(clearExpireCache, app.config.requestCache.expireTime);
+  const updateCacheTimer = setInterval(updateCacheData, app.config.requestCache.expireTime);
   app.beforeClose(async () => {
-    clearInterval(timer);
+    clearInterval(clearCacheTimer);
+    clearInterval(updateCacheTimer);
   });
 };
 

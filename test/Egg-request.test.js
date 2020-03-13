@@ -17,7 +17,7 @@ describe('test/Egg-request.test.js', () => {
   it('should GET /', () => {
     return app.httpRequest()
       .get('/')
-      .expect('hi, EggRequest')
+      .expect('hi, request-cache')
       .expect(200);
   });
 });

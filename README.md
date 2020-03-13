@@ -45,3 +45,10 @@ see [config/config.default.js](config/config.default.js) for more detail.
   // 没默认值
   await this.app.requestCache('http://127.0.0.1:7001/users', [options]);
 ```
+
+
+优化
+1. 将代码重构，分为三个class  一个总控制 一个redisclass 一个内存class
+2. 将相关函数抽离成独立的类 如 getCache  setCache
+3. 将相关帮助函数抽离成一个helper类
+4. test 代码编写
