@@ -5,7 +5,7 @@ const cache = {};
 
 // 格式化响应体
 function transformResponse(ctx) {
-  return ctx.res.data;
+  return ctx.data;
 }
 
 // 构造函数 统一处理通用的逻辑
@@ -28,7 +28,7 @@ function constructor(defOpts = {}) {
     // 无缓存则请求且写入缓存
     if (!response) {
       response = await instance.curl(url, params);
-      if (!conf.noCache) setCache(cacheKey, response);
+      if (!conf.noCache) await setCache(cacheKey, response);
     }
     response = transformResponse(response);
     // 结束时间
@@ -41,7 +41,7 @@ function constructor(defOpts = {}) {
 function createIndexes(url, params) {
   let keys = Object.keys(params);
   keys = keys.sort(); // 防止因为key顺序问题导致认为不是同一个请求
-  let strs = '';
+  let strs = url;
   keys.forEach(key => {
     strs += `${key}${params[key]}`;
   });
@@ -49,10 +49,10 @@ function createIndexes(url, params) {
 }
 
 // 保存数据
-function setCache(key, val) {
+async function setCache(key, val) {
   if (instance.redis) {
     if (typeof val === 'object') val = JSON.stringify(val);
-    instance.redis.set(instance.config.requestCache.redisPrefixKey + ':' + key, val, 'EX', (instance.config.requestCache.expireTime / 1000));
+    await instance.redis.set(instance.config.requestCache.redisPrefixKey + ':' + key, val, 'EX', (instance.config.requestCache.expireTime / 1000));
   } else {
     cache[key] = {
       value: val,
@@ -73,7 +73,7 @@ async function getCache(key) {
   return cache[key] && cache[key].value;
 }
 
-// 清理缓存
+// 清理内存
 async function clearExpireCache() {
   const keys = Object.keys(cache);
   keys.forEach(key => {
@@ -105,7 +105,7 @@ module.exports = app => {
   }, app.config.requestCache);
   app.coreLogger.info('[egg-request] init instance success!');
 
-  // 五秒清理一次缓存
+  // 五秒清理一次内存
   const clearCacheTimer = setInterval(clearExpireCache, app.config.requestCache.expireTime);
   app.beforeClose(async () => {
     clearInterval(clearCacheTimer);

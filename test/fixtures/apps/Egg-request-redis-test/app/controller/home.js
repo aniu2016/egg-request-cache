@@ -17,15 +17,6 @@ class HomeController extends Controller {
     this.ctx.body = result;
   }
 
-  async requestRandom() {
-    const result = await this.app.requestCache('http://test.com/a', { dataType: 'json', noCache: false });
-    this.ctx.body = result;
-  }
-
-  async requestRandomNoCache() {
-    const result = await this.app.requestCache('http://test.com/a', { dataType: 'json', noCache: true });
-    this.ctx.body = result;
-  }
 }
 
 module.exports = HomeController;

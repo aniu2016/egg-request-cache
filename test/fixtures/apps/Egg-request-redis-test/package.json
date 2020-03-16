@@ -1,0 +1,7 @@
+{
+  "name": "Egg-request-test",
+  "version": "0.0.1",
+  "dependencies": {
+    "egg-redis": "^2.4.0"
+  }
+}
