@@ -1,52 +1,48 @@
 # egg-request-cache
+只是代理了Egg内置的curl函数，参数都与curl保持一致
 
-## 依赖说明
 
-### 依赖的 egg 版本
 
-egg-Egg-request 版本 | egg 1.x
---- | ---
-1.x | 😁
-0.x | ❌
+## Install
 
-### 依赖的插件
-<!--
+```bash
+$ npm i @aniu2017/egg-request-cache -S
+```
 
-如果有依赖其它插件，请在这里特别说明。如
-
-- security
-- multipart
-
--->
-
-## 开启插件
+## Usage
 
 ```js
-// config/plugin.js
-exports.EggRequest = {
+// {app_root}/config/plugin.js
+exports['request-cache'] = {
   enable: true,
-  package: 'egg-Egg-request',
+  package: 'egg-request-cache',
 };
 ```
 
-## 使用场景
+## Configuration
 
-- Why and What: 描述为什么会有这个插件，它主要在完成一件什么事情。
-尽可能描述详细。
-- How: 描述这个插件是怎样使用的，具体的示例代码，甚至提供一个完整的示例，并给出链接。
+```js
+// {app_root}/config/config.default.js
+exports.requestCache = {
+  expiresTime: '', // 缓存时间 单位毫秒
+  redisPrefixKey: 'test', // redis key前缀 可选
+};
+```
 
-## 详细配置
+see [config/config.default.js](config/config.default.js) for more detail.
 
-请到 [config/config.default.js](config/config.default.js) 查看详细配置项说明。
+## Example
 
-## 单元测试
+<!-- example here -->
+```javascript
+  // {app_root}/Controller/user.js
 
-<!-- 描述如何在单元测试中使用此插件，例如 schedule 如何触发。无则省略。-->
+  // 默认设置了 dataType json method get
+  await this.app.requestCache.get('http://127.0.0.1:7001/users');
+  // 默认设置了 dataType json method post
+  await this.app.requestCache.post('http://127.0.0.1:7001/users', [options]);
 
-## 提问交流
+  // 没默认值
+  await this.app.requestCache('http://127.0.0.1:7001/users', [options]);
+```
 
-请到 [egg issues](https://github.com/eggjs/egg/issues) 异步交流。
-
-## License
-
-[MIT](LICENSE)

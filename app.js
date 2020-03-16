@@ -11,22 +11,28 @@ function transformResponse(ctx) {
 // 构造函数 统一处理通用的逻辑
 function constructor(defOpts = {}) {
   // 返回一个请求函数
-  return async function(url, conf) {
+  // @param conf (Object) : {
+  //    noCache (Boolean) 是否需要缓存
+  // } extend App.curl options
+  return async function(url, conf = {}) {
     // 开始时间
-    const startTime = Date.now();
-    let response;
+    // console.time('此次请求花费时间');
+    let response,
+      cacheKey;
     const params = Object.assign({}, defOpts, conf);
-    const cacheKey = createIndexes(url, params);
-    // 读取缓存
-    response = await getCache(cacheKey);
+    if (!conf.noCache) {
+      cacheKey = createIndexes(url, params);
+      // 读取缓存
+      response = await getCache(cacheKey);
+    }
     // 无缓存则请求且写入缓存
     if (!response) {
       response = await instance.curl(url, params);
-      setCache(cacheKey, response);
+      if (!conf.noCache) setCache(cacheKey, response);
     }
     response = transformResponse(response);
     // 结束时间
-    console.log('此次请求花费时间：', Date.now() - startTime);
+    // console.timeEnd('此次请求花费时间');
     return response;
   };
 }
@@ -77,19 +83,6 @@ async function clearExpireCache() {
   });
 }
 
-// 定时更新缓存数据
-async function updateCacheData() {
-  
-  return '';
-}
-
-async function updateMemoryData() {
-  return '';
-}
-
-async function updateRedisData() {
-  return '';
-}
 
 // 暴露的Api
 const requestCache = constructor();
@@ -114,10 +107,8 @@ module.exports = app => {
 
   // 五秒清理一次缓存
   const clearCacheTimer = setInterval(clearExpireCache, app.config.requestCache.expireTime);
-  const updateCacheTimer = setInterval(updateCacheData, app.config.requestCache.expireTime);
   app.beforeClose(async () => {
     clearInterval(clearCacheTimer);
-    clearInterval(updateCacheTimer);
   });
 };
 

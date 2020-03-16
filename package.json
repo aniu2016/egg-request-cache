@@ -1,6 +1,6 @@
 {
   "name": "@aniu2017/egg-request-cache",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Egg插件，HTTP响应报文缓存",
   "eggPlugin": {
     "name": "request-cache"

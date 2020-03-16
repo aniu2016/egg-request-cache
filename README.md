@@ -6,7 +6,7 @@
 ## Install
 
 ```bash
-$ npm i egg-request --save
+$ npm i @aniu2017/egg-request-cache -S
 ```
 
 ## Usage
@@ -25,7 +25,7 @@ exports['request-cache'] = {
 // {app_root}/config/config.default.js
 exports.requestCache = {
   expiresTime: '', // 缓存时间 单位毫秒
-  redisPrefixKey: 'test', // redis key前缀
+  redisPrefixKey: 'test', // redis key前缀 可选
 };
 ```
 
@@ -46,9 +46,3 @@ see [config/config.default.js](config/config.default.js) for more detail.
   await this.app.requestCache('http://127.0.0.1:7001/users', [options]);
 ```
 
-
-优化
-1. 将代码重构，分为三个class  一个总控制 一个redisclass 一个内存class
-2. 将相关函数抽离成独立的类 如 getCache  setCache
-3. 将相关帮助函数抽离成一个helper类
-4. test 代码编写
